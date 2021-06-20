@@ -23,6 +23,7 @@
 """
 # Streamlit dependencies
 from typing import Text
+from altair.vegalite.v4.schema.channels import Column
 from altair.vegalite.v4.schema.core import Categorical
 import streamlit as st
 import joblib,os
@@ -30,6 +31,7 @@ import joblib,os
 # Data dependencies
 import pandas as pd
 import numpy as np
+
 
 # Vectorizer
 #news_vectorizer = open("resources/tfidfvect.pkl","rb")
@@ -40,6 +42,7 @@ tweet_cv = joblib.load(news_vectorizer) # loading your vectorizer from the pkl f
 raw = pd.read_csv("resources/train.csv")
 
 # The main function where we will build the actual app
+@st.cache(suppress_st_warning=True)
 def main():
 	"""Tweet Classifier App with Streamlit """
 
@@ -67,55 +70,97 @@ def main():
 		if st.checkbox('Show raw data'): # data is hidden if box is unchecked
 			st.write(raw[['sentiment', 'message']]) # will write the df to the page
 
-		if not st.checkbox('view Graph', False, key=1):
-			st.subheader("Comparison of people who belief in climate change")
-			sent =pd.DataFrame(raw['sentiment'].value_counts())
-			st.bar_chart(sent)
-			st.line_chart(sent)
-			
-
 	#Building out the cover page
 	if selection == "Overview":
 		st.info("**What is Climate Change**")
 		st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623437693/climate-change-2254711_1920_mvmcum.jpg")
-		st.markdown("Climate change is a change in the usual weather found in a place.\nIt could be a change in how much rain a place usually get in a year/months/season.\nIt is also a change in Earth's Climate")
+		st.markdown("Climate change is a change in the usual weather found in a place.\
+			It could be a change in how much rain a place usually get in a year/months/season.\
+				It is also a change in Earth's Climate")
 		st.subheader("**What Is Causing Earth's Climate to change?**")
-		st.markdown("Many things can cause climate change. **For Example**: Oceans can change, Earth distance\nfrom the sun can change and Volcano eruptions can change our climate. Also human can change\nclimate too. One way to get energy is to burn Coals,Oils and Gas. Burning those can cause\nthe air to head up,this can change climate of a place and change Earth's climate.")
+		st.markdown("Many things can cause climate change. **For Example**: Oceans can change, Earth distance\
+			from the sun can change and Volcano eruptions can change our climate. Also human can change\
+				climate too. One way to get energy is to burn Coals,Oils and Gas. Burning those can cause\
+					the air to head up,this can change climate of a place and change Earth's climate.")
 		st.subheader("**What Might Happen To Earth's Climate?**")
-		st.markdown("Scientist say Earth's temperature will keep going up,and this will cause more snow and ice\nto melt. Oceans will rise higher,some places might get more rain and others less and other\nplaces might have stronger Hurricanes.")
+		st.markdown("Scientist say Earth's temperature will keep going up,and this will cause more snow and ice\
+			to melt. Oceans will rise higher,some places might get more rain and others less and other\
+				places might have stronger Hurricanes.")
 		st.subheader("**Better Solutions To Climate**")
-		st.markdown("Planting more trees 🏞️🏝️🏜️\nSave Energy 🔋🔌\nUse Water wisely 💦🚿💧.")
+		st.markdown("Planting more trees 🏞️🏝️🏜️\
+			Save Energy 🔋🔌\
+				Use Water wisely 💦🚿💧.")
 
 	#Building out the EDA page
 	if selection == "EDA":
 		st.header("Exploratory data analysis")
-		st.subheader("Tweet Dataset")
-		if not st.checkbox('show Data', False, key=1):
-			st.text("showing data")
-			st.write(raw[['sentiment', 'message']])
-			feature_labels = st.radio("select to view", ("columns", "rows"))
-		if st.button("About us"):
-			st.text("Hello World")
+		st.subheader("**Tweet Dataset**")
+		if not st.checkbox('Preview Dataset', False, key=1):
+			if st.checkbox("showing data"):
+				st.write(raw[['sentiment', 'message']].head())
+			st.markdown("* To view all the **Dataset** go to Information page.")
+			
+			#Show columns names
+			if st.checkbox("showing columns names"):
+				st.write(raw.columns)
+			
+			#Showing Dimensions
+			feature_labels = st.radio("select to view", ("Rows", "Columns", "All"))
+			if feature_labels == "Columns":
+				st.write("Total number of columns in the dataset: {}".format(raw.shape[1]))
+			elif feature_labels == "Rows":
+				st.write("Total number of rows in the dataset: {}".format(raw.shape[0]))
+			else:
+				st.write("Total shape of dataset: {}".format(raw.shape))
 
+			#Show summary of the data
+			if st.checkbox("show Dataset summary"):
+				st.write(raw.describe())
+			if st.checkbox("Select column"):
+				Col_option = st.selectbox("Select column",("sentiment","tweetid","message"))
+				if Col_option == "sentiment":
+					st.write(raw["sentiment"])
+				if Col_option == "tweetid":
+					st.write(raw["tweetid"])
+				if Col_option == "message":
+					st.write(raw["message"])
+
+		#Plotting graphs
+		st.subheader("**Graph Plot**")
+		if st.checkbox("showing Bar Graph"):
+				st.bar_chart(raw['sentiment'].value_counts())
+		
+				
+		#Line graph
+		if st.checkbox("showing Line Graph"):
+				st.line_chart(raw["sentiment"].value_counts())
+
+		#Area graph
+		if st.checkbox("showing Area Graph"):
+				group = raw.groupby('sentiment')
+				st.area_chart(group)
+						
+		if st.button("About us"):
+			st.text("Tweet Classifier App. Build with Streamlit")
 
 	# #Building out the Team Members page
-	# if selection == "Team_members":
-	# 	st.info("**Our Team:**")
-	# 	col1, col2 = st.beta_columns(2)
-	# 	with col1:
-	# 		st.header("Lerato Mohlala")
-	# 		st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623430480/IMG_20210611_185350_023_fko9ia.jpg",caption= "EDSA-Student", width=100)
-	# 	with col2:
-	# 		st.header("Matthew Rip")
-	# 		st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623430480/IMG_20210611_185350_023_fko9ia.jpg",caption= "EDSA-Student", width=100)
+	if selection == "Team_members":
+		st.info("**Our Team:**")
+		col1, col2 = st.beta_columns(2)
+		with col1:
+			st.header("Lerato Mohlala")
+			st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623430480/IMG_20210611_185350_023_fko9ia.jpg",caption= "EDSA-Student", width=100)
+		with col2:
+			st.header("Matthew Rip")
+			st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623430480/IMG_20210611_185350_023_fko9ia.jpg",caption= "EDSA-Student", width=100)
 
-	# 	col3, col4 = st.beta_columns(2)
-	# 	with col3:
-	# 		st.header("Mukondeleli Negukhula")
-	# 		st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623430480/IMG_20210611_185350_023_fko9ia.jpg",caption= "EDSA-Student", width=100)
-	# 	with col4:
-	# 		st.header("Rejoice Van der Walt")
-	# 		st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623430480/IMG_20210611_185350_023_fko9ia.jpg",caption= "EDSA-Student", width=100)
+		col3, col4 = st.beta_columns(2)
+		with col3:
+			st.header("Mukondeleli Negukhula")
+			st.image("https://res.cloudinary.com/limoncloud/image/upload/v1624197385/IMG_20210620_155017_619_tub8j1.jpg",caption= "EDSA-Student", width=100)
+		with col4:
+			st.header("Rejoice Van der Walt")
+			st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623430480/IMG_20210611_185350_023_fko9ia.jpg",caption= "EDSA-Student", width=100)
 	
 	# Building out the predication page
 	if selection == "Prediction":
