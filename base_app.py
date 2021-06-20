@@ -42,7 +42,7 @@ tweet_cv = joblib.load(news_vectorizer) # loading your vectorizer from the pkl f
 raw = pd.read_csv("resources/train.csv")
 
 # The main function where we will build the actual app
-@st.cache(suppress_st_warning=True)
+#@st.cache(suppress_st_warning=True)
 def main():
 	"""Tweet Classifier App with Streamlit """
 
@@ -50,11 +50,8 @@ def main():
 	# these are static across all pages
 	st.title("Climate Change Analysis With Tweet Classifer")
 	st.subheader("Climate change tweet classification")
-	st.write('This is a web app to predict the text category based on\
-        the tweet text about climate change. Please enter the\
-        text that includes climate change. After that, click on the Classify button at the bottom to\
-        see the prediction of the classifier.')
 
+	
 	# Creating sidebar with selection box -
 	# you can create multiple pages this way
 	options = ["Prediction", "Information", "Team_members", "EDA", "Overview"]
@@ -87,15 +84,15 @@ def main():
 			to melt. Oceans will rise higher,some places might get more rain and others less and other\
 				places might have stronger Hurricanes.")
 		st.subheader("**Better Solutions To Climate**")
-		st.markdown("Planting more trees 🏞️🏝️🏜️\
-			Save Energy 🔋🔌\
-				Use Water wisely 💦🚿💧.")
+		st.markdown("* Planting more trees 🏞️🏝️🏜️")
+		st.markdown("* Save Energy 🔋🔌")
+		st.markdown("* Use Water wisely 💦🚿💧")
 
 	#Building out the EDA page
 	if selection == "EDA":
 		st.header("Exploratory data analysis")
 		st.subheader("**Tweet Dataset**")
-		if not st.checkbox('Preview Dataset', False, key=1):
+		if st.checkbox('Preview Dataset', False, key=1):
 			if st.checkbox("showing data"):
 				st.write(raw[['sentiment', 'message']].head())
 			st.markdown("* To view all the **Dataset** go to Information page.")
@@ -116,14 +113,14 @@ def main():
 			#Show summary of the data
 			if st.checkbox("show Dataset summary"):
 				st.write(raw.describe())
-			if st.checkbox("Select column"):
-				Col_option = st.selectbox("Select column",("sentiment","tweetid","message"))
-				if Col_option == "sentiment":
-					st.write(raw["sentiment"])
-				if Col_option == "tweetid":
-					st.write(raw["tweetid"])
-				if Col_option == "message":
-					st.write(raw["message"])
+				if st.checkbox("Select column"):
+					Col_option = st.selectbox("Select column",("sentiment","tweetid","message"))
+					if Col_option == "sentiment":
+						st.write(raw["sentiment"])
+					if Col_option == "tweetid":
+						st.write(raw["tweetid"])
+					if Col_option == "message":
+						st.write(raw["message"])
 
 		#Plotting graphs
 		st.subheader("**Graph Plot**")
@@ -149,21 +146,26 @@ def main():
 		col1, col2 = st.beta_columns(2)
 		with col1:
 			st.header("Lerato Mohlala")
-			st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623430480/IMG_20210611_185350_023_fko9ia.jpg",caption= "EDSA-Student", width=100)
+			st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623430480/IMG_20210611_185350_023_fko9ia.jpg",caption= "EDSA-Student", width=150)
 		with col2:
 			st.header("Matthew Rip")
-			st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623430480/IMG_20210611_185350_023_fko9ia.jpg",caption= "EDSA-Student", width=100)
+			st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623430480/IMG_20210611_185350_023_fko9ia.jpg",caption= "EDSA-Student", width=150)
 
 		col3, col4 = st.beta_columns(2)
 		with col3:
 			st.header("Mukondeleli Negukhula")
-			st.image("https://res.cloudinary.com/limoncloud/image/upload/v1624197385/IMG_20210620_155017_619_tub8j1.jpg",caption= "EDSA-Student", width=100)
+			st.image("https://res.cloudinary.com/limoncloud/image/upload/v1624197385/IMG_20210620_155017_619_tub8j1.jpg",caption= "EDSA-Student", width=190)
 		with col4:
 			st.header("Rejoice Van der Walt")
-			st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623430480/IMG_20210611_185350_023_fko9ia.jpg",caption= "EDSA-Student", width=100)
+			st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623430480/IMG_20210611_185350_023_fko9ia.jpg",caption= "EDSA-Student", width=150)
 	
 	# Building out the predication page
 	if selection == "Prediction":
+		st.write('This is a web app to predict the text category based on\
+        the tweet text about climate change. Please enter the\
+        text that includes climate change. After that, click on the Classify button at the bottom to\
+        see the prediction of the classifier.')
+
 		st.info("Prediction with ML Models")
 		# Creating a text box for user input
 		tweet_text = st.text_area("Enter Text",'prediction text')
