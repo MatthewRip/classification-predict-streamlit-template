@@ -51,7 +51,7 @@ def main():
 	st.title("Climate Change Analysis With Tweet Classifer")
 	st.subheader("Climate change tweet classification")
 
-	
+
 	# Creating sidebar with selection box -
 	# you can create multiple pages this way
 	options = ["Prediction", "Information", "Team_members", "EDA", "Overview"]
@@ -69,7 +69,7 @@ def main():
 
 	#Building out the cover page
 	if selection == "Overview":
-		st.info("**What is Climate Change**")
+		st.info("**What is Climate Change?**")
 		st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623437693/climate-change-2254711_1920_mvmcum.jpg")
 		st.markdown("Climate change is a change in the usual weather found in a place.\
 			It could be a change in how much rain a place usually get in a year/months/season.\
@@ -84,8 +84,8 @@ def main():
 			to melt. Oceans will rise higher,some places might get more rain and others less and other\
 				places might have stronger Hurricanes.")
 		st.subheader("**Better Solutions To Climate**")
-		st.markdown("* Planting more trees 🏞️🏝️🏜️")
-		st.markdown("* Save Energy 🔋🔌")
+		st.markdown("* Planting more trees :seedling: :ear_of_rice: :deciduous_tree:")
+		st.markdown("* Save Energy :battery: :electric_plug:")
 		st.markdown("* Use Water wisely 💦🚿💧")
 
 	#Building out the EDA page
@@ -126,17 +126,11 @@ def main():
 		st.subheader("**Graph Plot**")
 		if st.checkbox("showing Bar Graph"):
 				st.bar_chart(raw['sentiment'].value_counts())
-		
-				
-		#Line graph
-		if st.checkbox("showing Line Graph"):
-				st.line_chart(raw["sentiment"].value_counts())
-
-		#Area graph
-		if st.checkbox("showing Area Graph"):
-				group = raw.groupby('sentiment')
-				st.area_chart(group)
-						
+				st.text("-1: 'Negetive' Tweet does not believe in man-made climate change")
+				st.text("0: 'Neutral' Neither the tweet supports nor refuses the believe of man-made climate change")
+				st.text("1: 'Positive' Tweet supports the believe of climate change")
+				st.text("2: 'News' Tweet links to factual news about climate change")
+			
 		if st.button("About us"):
 			st.text("Tweet Classifier App. Build with Streamlit")
 
@@ -149,7 +143,7 @@ def main():
 			st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623430480/IMG_20210611_185350_023_fko9ia.jpg",caption= "EDSA-Student", width=150)
 		with col2:
 			st.header("Matthew Rip")
-			st.image("https://res.cloudinary.com/limoncloud/image/upload/v1623430480/IMG_20210611_185350_023_fko9ia.jpg",caption= "EDSA-Student", width=150)
+			st.image("https://res.cloudinary.com/limoncloud/image/upload/v1624377289/IMG_20210622_175320_507_ss3efp.jpg",caption= "EDSA-Student", width=150)
 
 		col3, col4 = st.beta_columns(2)
 		with col3:
@@ -183,11 +177,17 @@ def main():
 			# You can use a dictionary or similar structure to make this output
 			# more human interpretable.
 			st.success("Text Categorized as: {}".format(prediction))
+			st.success("Status: {}".format(tweet_classifier(prediction)))
 
-			st.subheader('Prediction')
-			text_Category = np.array(['-1','0','1','2'])
-			st.write(text_Category[prediction[:]])
-		
+def tweet_classifier(prediction):
+	if prediction == -1:
+		return 'Tweet does not believe in climate change  :-1:'
+	elif prediction == 0:  
+		return 'Neither the tweet supports nor refuses the believe of climate change  :exclamation:'
+	elif prediction == 1:
+		return 'Tweet supports the believe of climate change  :stuck_out_tongue_winking_eye:'
+	else:
+		return 'Tweet links to factual news about climate change  :page_facing_up:'
 		
 
 # Required to let Streamlit instantiate our web app.  
