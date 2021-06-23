@@ -42,7 +42,6 @@ tweet_cv = joblib.load(news_vectorizer) # loading your vectorizer from the pkl f
 raw = pd.read_csv("resources/train.csv")
 
 # The main function where we will build the actual app
-#@st.cache(suppress_st_warning=True)
 def main():
 	"""Tweet Classifier App with Streamlit """
 
